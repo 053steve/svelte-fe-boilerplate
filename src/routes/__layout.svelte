@@ -1,3 +1,8 @@
+<script lang="ts" context='module'>
+	  import { applyHttpInterceptors } from '../interceptors';
+	  applyHttpInterceptors();
+</script>
+
 
 <header>
     header

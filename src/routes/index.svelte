@@ -6,7 +6,7 @@
 
     let authUser;
     let loginForm: LoginForm  = {
-        email: '',
+        username: '',
         password: ''
     }
 
@@ -22,7 +22,7 @@
 </svelte:head>
 
 <h1>Login</h1>
-<input type="email" bind:value="{loginForm.email}" placeholder="Enter your email">
+<input type="email" bind:value="{loginForm.username}" placeholder="Enter your email">
 <input type="password" bind:value="{loginForm.password}" placeholder="Enter your password">
 <button on:click="{login}">Login</button>
 

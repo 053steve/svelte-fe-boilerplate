@@ -8,9 +8,10 @@
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "eslint --ignore-path .gitignore .",
-    "build:client-local": "openapi-generator generate -g typescript-fetch -i http://localhost:4000/swagger.json -o src/client --additional-properties npmName=@only-bu,snapshot=true,ngVersion=9.1.9 --skip-validate-spec "
+    "build:client-local": "rm -rf ./src/client && openapi-generator generate -g typescript-axios -i http://localhost:4000/swagger.json -o src/client --additional-properties npmName=@only-bu,snapshot=true,ngVersion=9.1.9 --skip-validate-spec "
   },
   "dependencies": {
+    "axios": "^0.24.0",
     "cookie": "^0.4.1",
     "js-cookie": "^2.2.1"
   },

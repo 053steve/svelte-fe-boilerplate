@@ -1,15 +1,27 @@
 {
   "name": "@only-bu",
-  "version": "1.0.0-SNAPSHOT.202111110819",
+  "version": "1.0.0-SNAPSHOT.202111170953",
   "description": "OpenAPI client for @only-bu",
-  "author": "OpenAPI-Generator",
+  "author": "OpenAPI-Generator Contributors",
+  "keywords": [
+    "axios",
+    "typescript",
+    "openapi-client",
+    "openapi-generator",
+    "@only-bu"
+  ],
+  "license": "Unlicense",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "prepare": "npm run build"
+    "build": "tsc --outDir dist/",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "axios": "^0.19.2"
   },
   "devDependencies": {
-    "typescript": "^2.4"
+    "@types/node": "^12.11.5",
+    "typescript": "^3.6.4"
   }
 }

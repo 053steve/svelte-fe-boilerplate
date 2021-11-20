@@ -1,5 +1,11 @@
 <script context='module'>
+	import {userStore} from '../../stores/user.store';
+
 	export async function load({ session }) {
+
+		
+		await userStore.getAllUsers();
+
 
 		if (!session.user || !session.authenticated || !session.token) {
 			return {
@@ -13,6 +19,11 @@
 			}
 		}
 	}
+
+	
+
+	userStore
+
 </script>
 
 <script lang="ts">
