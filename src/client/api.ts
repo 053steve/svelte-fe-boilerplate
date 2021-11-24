@@ -49,13 +49,31 @@ export interface AuthRequest {
      * @type {string}
      * @memberof AuthRequest
      */
-    username: string;
+    username?: string | null;
     /**
      * 
      * @type {string}
      * @memberof AuthRequest
      */
-    password: string;
+    password?: string | null;
+    /**
+     * 
+     * @type {AuthType}
+     * @memberof AuthRequest
+     */
+    authType: AuthType;
+    /**
+     * 
+     * @type {string}
+     * @memberof AuthRequest
+     */
+    signature?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof AuthRequest
+     */
+    publicKey?: string | null;
 }
 /**
  * 
@@ -81,6 +99,36 @@ export interface AuthResponses {
      * @memberof AuthResponses
      */
     message?: any | null;
+}
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+export enum AuthType {
+    STANDARD = 'STANDARD',
+    W3WALLET = 'W3_WALLET'
+}
+
+/**
+ * 
+ * @export
+ * @interface NonceReq
+ */
+export interface NonceReq {
+    /**
+     * 
+     * @type {string}
+     * @memberof NonceReq
+     */
+    publicKey: string;
+}
+/**
+ * 
+ * @export
+ * @interface NullableUSERTYPE
+ */
+export interface NullableUSERTYPE extends USERTYPE {
 }
 /**
  * From T, pick a set of properties whose keys are in the union K
@@ -132,58 +180,59 @@ export interface PickIUserFirstnameOrLastnameOrUsernameOrEmailOrUserTypeOrCreate
     updatedAt?: string;
 }
 /**
- * From T, pick a set of properties whose keys are in the union K
- * @export
- * @interface PickIUserFirstnameOrLastnameOrUsernameOrPasswordOrEmailOrUserType
- */
-export interface PickIUserFirstnameOrLastnameOrUsernameOrPasswordOrEmailOrUserType {
-    /**
-     * 
-     * @type {string}
-     * @memberof PickIUserFirstnameOrLastnameOrUsernameOrPasswordOrEmailOrUserType
-     */
-    firstname: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PickIUserFirstnameOrLastnameOrUsernameOrPasswordOrEmailOrUserType
-     */
-    lastname: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PickIUserFirstnameOrLastnameOrUsernameOrPasswordOrEmailOrUserType
-     */
-    username: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PickIUserFirstnameOrLastnameOrUsernameOrPasswordOrEmailOrUserType
-     */
-    email: string;
-    /**
-     * 
-     * @type {USERTYPE}
-     * @memberof PickIUserFirstnameOrLastnameOrUsernameOrPasswordOrEmailOrUserType
-     */
-    user_type: USERTYPE;
-    /**
-     * 
-     * @type {string}
-     * @memberof PickIUserFirstnameOrLastnameOrUsernameOrPasswordOrEmailOrUserType
-     */
-    password: string;
-}
-/**
  * 
  * @export
  * @enum {string}
  */
 export enum USERTYPE {
     ADMIN = 'ADMIN',
-    STAFF = 'STAFF'
+    STAFF = 'STAFF',
+    USER = 'USER'
 }
 
+/**
+ * 
+ * @export
+ * @interface UserCreateReq
+ */
+export interface UserCreateReq {
+    /**
+     * 
+     * @type {string}
+     * @memberof UserCreateReq
+     */
+    firstname?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserCreateReq
+     */
+    lastname?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserCreateReq
+     */
+    username: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserCreateReq
+     */
+    password: string;
+    /**
+     * 
+     * @type {NullableUSERTYPE}
+     * @memberof UserCreateReq
+     */
+    user_type?: NullableUSERTYPE | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserCreateReq
+     */
+    email: string;
+}
 /**
  * 
  * @export
@@ -214,6 +263,12 @@ export interface UserPayload {
      * @memberof UserPayload
      */
     token?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserPayload
+     */
+    nonce?: string;
 }
 /**
  * 
@@ -251,56 +306,37 @@ export interface UserUpdateReq {
      * @type {string}
      * @memberof UserUpdateReq
      */
-    email?: string;
+    firstname?: string | null;
     /**
      * 
      * @type {string}
      * @memberof UserUpdateReq
      */
-    username?: string;
+    lastname?: string | null;
     /**
      * 
      * @type {string}
      * @memberof UserUpdateReq
      */
-    lastname?: string;
+    username: string;
     /**
      * 
      * @type {string}
      * @memberof UserUpdateReq
      */
-    firstname?: string;
-}
-/**
- * 
- * @export
- * @interface UserUpdateReqAllOf
- */
-export interface UserUpdateReqAllOf {
+    password: string;
+    /**
+     * 
+     * @type {NullableUSERTYPE}
+     * @memberof UserUpdateReq
+     */
+    user_type?: NullableUSERTYPE | null;
     /**
      * 
      * @type {string}
-     * @memberof UserUpdateReqAllOf
+     * @memberof UserUpdateReq
      */
-    email?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserUpdateReqAllOf
-     */
-    username?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserUpdateReqAllOf
-     */
-    lastname?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserUpdateReqAllOf
-     */
-    firstname?: string;
+    email: string;
 }
 
 /**
@@ -424,14 +460,14 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
     return {
         /**
          * 
-         * @param {PickIUserFirstnameOrLastnameOrUsernameOrPasswordOrEmailOrUserType} body 
+         * @param {UserCreateReq} userCreateReq 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createUser: async (body: PickIUserFirstnameOrLastnameOrUsernameOrPasswordOrEmailOrUserType, options: any = {}): Promise<RequestArgs> => {
-            // verify required parameter 'body' is not null or undefined
-            if (body === null || body === undefined) {
-                throw new RequiredError('body','Required parameter body was null or undefined when calling createUser.');
+        createUser: async (userCreateReq: UserCreateReq, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'userCreateReq' is not null or undefined
+            if (userCreateReq === null || userCreateReq === undefined) {
+                throw new RequiredError('userCreateReq','Required parameter userCreateReq was null or undefined when calling createUser.');
             }
             const localVarPath = `/user/create`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -458,8 +494,8 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
             localVarUrlObj.search = (new URLSearchParams(query)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof body !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(body !== undefined ? body : {}) : (body || "");
+            const needsSerialization = (typeof userCreateReq !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
+            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(userCreateReq !== undefined ? userCreateReq : {}) : (userCreateReq || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -574,6 +610,50 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
             localVarUrlObj.search = (new URLSearchParams(query)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {NonceReq} nonceReq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getOrCreateNonce: async (nonceReq: NonceReq, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'nonceReq' is not null or undefined
+            if (nonceReq === null || nonceReq === undefined) {
+                throw new RequiredError('nonceReq','Required parameter nonceReq was null or undefined when calling getOrCreateNonce.');
+            }
+            const localVarPath = `/user/create/nonce`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            const query = new URLSearchParams(localVarUrlObj.search);
+            for (const key in localVarQueryParameter) {
+                query.set(key, localVarQueryParameter[key]);
+            }
+            for (const key in options.query) {
+                query.set(key, options.query[key]);
+            }
+            localVarUrlObj.search = (new URLSearchParams(query)).toString();
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            const needsSerialization = (typeof nonceReq !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
+            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(nonceReq !== undefined ? nonceReq : {}) : (nonceReq || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -874,12 +954,12 @@ export const UserApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {PickIUserFirstnameOrLastnameOrUsernameOrPasswordOrEmailOrUserType} body 
+         * @param {UserCreateReq} userCreateReq 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createUser(body: PickIUserFirstnameOrLastnameOrUsernameOrPasswordOrEmailOrUserType, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserResponse>> {
-            const localVarAxiosArgs = await UserApiAxiosParamCreator(configuration).createUser(body, options);
+        async createUser(userCreateReq: UserCreateReq, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserResponse>> {
+            const localVarAxiosArgs = await UserApiAxiosParamCreator(configuration).createUser(userCreateReq, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -909,6 +989,19 @@ export const UserApiFp = function(configuration?: Configuration) {
          */
         async getAllUsers(pageNumber?: number, pageSize?: number, filter?: string, sortOrder?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserResponse>> {
             const localVarAxiosArgs = await UserApiAxiosParamCreator(configuration).getAllUsers(pageNumber, pageSize, filter, sortOrder, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * 
+         * @param {NonceReq} nonceReq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getOrCreateNonce(nonceReq: NonceReq, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserResponse>> {
+            const localVarAxiosArgs = await UserApiAxiosParamCreator(configuration).getOrCreateNonce(nonceReq, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -993,12 +1086,12 @@ export const UserApiFactory = function (configuration?: Configuration, basePath?
     return {
         /**
          * 
-         * @param {PickIUserFirstnameOrLastnameOrUsernameOrPasswordOrEmailOrUserType} body 
+         * @param {UserCreateReq} userCreateReq 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createUser(body: PickIUserFirstnameOrLastnameOrUsernameOrPasswordOrEmailOrUserType, options?: any): AxiosPromise<UserResponse> {
-            return UserApiFp(configuration).createUser(body, options).then((request) => request(axios, basePath));
+        createUser(userCreateReq: UserCreateReq, options?: any): AxiosPromise<UserResponse> {
+            return UserApiFp(configuration).createUser(userCreateReq, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1020,6 +1113,15 @@ export const UserApiFactory = function (configuration?: Configuration, basePath?
          */
         getAllUsers(pageNumber?: number, pageSize?: number, filter?: string, sortOrder?: string, options?: any): AxiosPromise<UserResponse> {
             return UserApiFp(configuration).getAllUsers(pageNumber, pageSize, filter, sortOrder, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {NonceReq} nonceReq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getOrCreateNonce(nonceReq: NonceReq, options?: any): AxiosPromise<UserResponse> {
+            return UserApiFp(configuration).getOrCreateNonce(nonceReq, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1085,13 +1187,13 @@ export const UserApiFactory = function (configuration?: Configuration, basePath?
 export class UserApi extends BaseAPI {
     /**
      * 
-     * @param {PickIUserFirstnameOrLastnameOrUsernameOrPasswordOrEmailOrUserType} body 
+     * @param {UserCreateReq} userCreateReq 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UserApi
      */
-    public createUser(body: PickIUserFirstnameOrLastnameOrUsernameOrPasswordOrEmailOrUserType, options?: any) {
-        return UserApiFp(this.configuration).createUser(body, options).then((request) => request(this.axios, this.basePath));
+    public createUser(userCreateReq: UserCreateReq, options?: any) {
+        return UserApiFp(this.configuration).createUser(userCreateReq, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1117,6 +1219,17 @@ export class UserApi extends BaseAPI {
      */
     public getAllUsers(pageNumber?: number, pageSize?: number, filter?: string, sortOrder?: string, options?: any) {
         return UserApiFp(this.configuration).getAllUsers(pageNumber, pageSize, filter, sortOrder, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {NonceReq} nonceReq 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UserApi
+     */
+    public getOrCreateNonce(nonceReq: NonceReq, options?: any) {
+        return UserApiFp(this.configuration).getOrCreateNonce(nonceReq, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
