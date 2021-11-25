@@ -4,6 +4,9 @@ import { AuthApi, AuthType, UserApi } from 'src/client/api';
 import type { LoginForm } from '../common/interfaces/auth';
 import { authenticate, logout } from '../services/auth.service';
 import { browser } from "$app/env";
+import { web3 } from 'svelte-web3'
+
+// import web3 from 'web3';
 
 
 // if (browser) {
@@ -16,11 +19,17 @@ declare let window: any;
 
 class AuthStore {
 
+    private web3Service;
+
     constructor(
         public authUser = writable([]),
         private authApi = new AuthApi(),
         private userApi = new UserApi()
-    ) { }
+    ) {
+        web3.subscribe(value => {
+            this.web3Service = value;
+          })
+     }
 
     async login(loginForm: LoginForm): Promise<void> {
 
@@ -36,28 +45,26 @@ class AuthStore {
         authenticate(result.data?.payload);
     }
 
-    async loginMetaMask() {
-
-        console.log('loginMetaMask');
-        if (this.ethEnabled()) {
-            // get public key
-
-            // window.ethereum.personal.sign(window.ethereum.fromUtf8("Hello from Toptal!"), window.ethereum.eth.coinbase, console.log);
+    async metaMaskAuth(publicKey) {
+        try {
+            const result = await this.userApi.getOrCreateNonce({publicKey});
+            const {payload} = result.data;
+            console.log('payload');
+            console.log(payload);
+            console.log(this.web3Service.eth);
+            // const test = await this.web3Service.eth.getCoinbase();
+            // console.log(test);
+            
+            // return payload.nonce;    
+        } catch (err) {
+            // find some better way to hanlde error, maybe some error component
+            console.log('something went wrong')
+            console.log(err);
         }
         
-
-        // this.userApi.createUser           
     }
 
-    ethEnabled = async () => {
     
-        if (window.ethereum) {
-            await window.ethereum.send('eth_requestAccounts');
-            // window.web3 = new web3(window.ethereum);
-            return true;
-        }
-        return false;
-    }
 
     async logout(): Promise<void> {
         this.authUser.set([]);
