@@ -1,7 +1,9 @@
+
 <script lang="ts">
   import { authStore } from "../stores/auth.store";
   import type { LoginForm } from "../common/interfaces/auth";
   import { onMount } from "svelte";
+  
   import {
     defaultChainStore,
     web3,
@@ -32,9 +34,6 @@
 
   async function loginMetaMask() {
     await defaultChainStore.setBrowserProvider();
-    
-    // test = await $web3.eth.getCoinbase();
-    // console.log(test);
     await authStore.metaMaskAuth($selectedAccount);
     // const signature = 
   }

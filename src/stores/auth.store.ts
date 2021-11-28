@@ -3,20 +3,15 @@ import { writable } from 'svelte/store';
 import { AuthApi, AuthType, UserApi } from 'src/client/api';
 import type { LoginForm } from '../common/interfaces/auth';
 import { authenticate, logout } from '../services/auth.service';
-import { browser } from "$app/env";
+// import { browser } from "$app/env";
 import { web3 } from 'svelte-web3'
+import {ENV_OBJ} from '$lib/env';
+// import { get } from 'svelte/store';
+// import { session } from "$app/stores";
 
-// import web3 from 'web3';
 
-
-// if (browser) {
-//     import web3 from 'web3';
-// }
 
 declare let window: any;
-
-
-
 class AuthStore {
 
     private web3Service;
@@ -47,15 +42,17 @@ class AuthStore {
 
     async metaMaskAuth(publicKey) {
         try {
+            const { NONCE_MSG } = ENV_OBJ;
             const result = await this.userApi.getOrCreateNonce({publicKey});
             const {payload} = result.data;
-            console.log('payload');
-            console.log(payload);
-            console.log(this.web3Service.eth);
-            // const test = await this.web3Service.eth.getCoinbase();
-            // console.log(test);
             
-            // return payload.nonce;    
+            const msg = `${NONCE_MSG}${payload.nonce}`
+            console.log(msg)
+            const signature = await this.web3Service.eth.personal.sign(msg, publicKey);
+            // const test = await this.web3Service.eth.getCoinbase();
+            const result2 = await this.authApi.auth({publicKey, signature, authType: AuthType.W3WALLET});
+            console.log(result2);
+            
         } catch (err) {
             // find some better way to hanlde error, maybe some error component
             console.log('something went wrong')
