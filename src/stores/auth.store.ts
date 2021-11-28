@@ -43,15 +43,17 @@ class AuthStore {
     async metaMaskAuth(publicKey) {
         try {
             const { NONCE_MSG } = ENV_OBJ;
-            const result = await this.userApi.getOrCreateNonce({publicKey});
-            const {payload} = result.data;
+            const nonceResult = await this.userApi.getOrCreateNonce({publicKey});
+            const {payload} = nonceResult.data;
             
             const msg = `${NONCE_MSG}${payload.nonce}`
             console.log(msg)
             const signature = await this.web3Service.eth.personal.sign(msg, publicKey);
-            // const test = await this.web3Service.eth.getCoinbase();
-            const result2 = await this.authApi.auth({publicKey, signature, authType: AuthType.W3WALLET});
-            console.log(result2);
+
+            const authResult = await this.authApi.auth({publicKey, signature, authType: AuthType.W3WALLET});
+            this.authUser.set([authResult.data?.payload?.user]);
+            authenticate(authResult.data?.payload);
+
             
         } catch (err) {
             // find some better way to hanlde error, maybe some error component
